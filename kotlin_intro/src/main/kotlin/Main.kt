@@ -9,10 +9,7 @@ fun main(){
     val porsche: Car = Car("Porsche", "911", "PORSCH2023")
 
     //adding 4 cars
-    CarCheckUpSystem.cars.add(audi)
-    CarCheckUpSystem.cars.add(bmw)
-    CarCheckUpSystem.cars.add(mercedes)
-    CarCheckUpSystem.cars.add(porsche)
+    CarCheckUpSystem.cars.addAll(arrayOf(audi, bmw, mercedes, porsche))
 
     //adding 10 CarCheckUps
     CarCheckUpSystem.checkUps.add(CarCheckUp(LocalDateTime.of(2023, 7, 6, 10, 30,0), audi))
