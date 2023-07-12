@@ -2,13 +2,10 @@ package com.infinum.academy.springcore
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.PropertySource
+import org.springframework.context.annotation.*
 import org.springframework.core.io.FileUrlResource
 import org.springframework.core.io.Resource
+import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.stereotype.Component
 import java.io.FileOutputStream
 import java.time.LocalDateTime
@@ -55,12 +52,24 @@ class ApplicationConfiguration {
     }
 
     @Bean
-    fun getRepository(@Value("\${app.value.switch}") switch: Int, file: Resource, dataSource: DataSource): CarCheckUpRepository{
-        return if(switch == 0){
-            return InFileCarCheckUpRepository(file)
-        }else
-            return InMemoryCarCheckUpRepository(dataSource)
+    @Conditional(ConditionForInFileRep::class)
+    fun getInFileRep(file: Resource): CarCheckUpRepository{
+        return InFileCarCheckUpRepository(file)
     }
+
+    @Bean
+    @Conditional(ConditionForInMemoryRep::class)
+    fun getInMemoryRep(dataSource: DataSource): CarCheckUpRepository{
+        return InMemoryCarCheckUpRepository(dataSource)
+    }
+
+//    @Bean
+//    fun getRepository(@Value("\${app.value.switch}") switch: Int, file: Resource, dataSource: DataSource): CarCheckUpRepository{
+//        return if(switch == 0){
+//            return InFileCarCheckUpRepository(file)
+//        }else
+//            return InMemoryCarCheckUpRepository(dataSource)
+//    }
 }
 
 @Component
@@ -214,5 +223,19 @@ class CarCheckUpNotFoundException(id: Long): RuntimeException("Car check-up ID $
 
 
 
+class ConditionForInMemoryRep : Condition {
+    override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
+        val enviroment = context.environment
+        val switch = enviroment.getProperty("app.value.switch")
+        return (switch == "0")
+    }
+}
 
+class ConditionForInFileRep : Condition {
+    override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
+        val enviroment = context.environment
+        val switch = enviroment.getProperty("app.value.switch")
+        return (switch == "1")
+    }
+}
 
