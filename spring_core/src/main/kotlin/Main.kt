@@ -62,14 +62,6 @@ class ApplicationConfiguration {
     fun getInMemoryRep(dataSource: DataSource): CarCheckUpRepository{
         return InMemoryCarCheckUpRepository(dataSource)
     }
-
-//    @Bean
-//    fun getRepository(@Value("\${app.value.switch}") switch: Int, file: Resource, dataSource: DataSource): CarCheckUpRepository{
-//        return if(switch == 0){
-//            return InFileCarCheckUpRepository(file)
-//        }else
-//            return InMemoryCarCheckUpRepository(dataSource)
-//    }
 }
 
 @Component
