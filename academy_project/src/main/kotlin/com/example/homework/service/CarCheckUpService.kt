@@ -2,6 +2,7 @@ package com.example.homework.service
 
 import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
+import com.example.homework.entity.CarIdException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,7 +22,7 @@ class CarCheckUpService() {
     }
 
     fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: Long): Boolean{
-        if(!doesCarExist(carId)) return false
+        doesCarExist(carId)
 
         val id = (carCheckUps.keys.maxOrNull() ?: 0) + 1
         val newCheckUp = CarCheckUp(id, performedAt, worker, price, carId)
@@ -33,7 +34,7 @@ class CarCheckUpService() {
         return true
     }
 
-    fun fetchDetails(carId: Long): Car?{
+    fun fetchDetailsByCarId(carId: Long): Car?{
         return cars[carId]
     }
 
@@ -63,7 +64,8 @@ class CarCheckUpService() {
         } ?: true
     }
 
-    fun doesCarExist(carId: Long): Boolean{
-        return cars.containsKey(carId)
+    fun doesCarExist(carId: Long){
+        if(!cars.containsKey(carId))
+            throw CarIdException(carId)
     }
 }

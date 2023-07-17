@@ -2,6 +2,7 @@ package com.example.homework
 
 import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUpRequest
+import com.example.homework.entity.CarIdException
 import com.example.homework.service.CarCheckUpService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -36,10 +37,10 @@ class CarCheckUpControllerTest{
     @BeforeEach
     fun setUp(){
         every { carCheckUpService.addCar("Manufacturer1", "Model1", Year.of(2023), "VIN1")} answers {true}
-        every { carCheckUpService.fetchDetails(1) } answers { returnCar() }
+        every { carCheckUpService.fetchDetailsByCarId(1) } answers { returnCar() }
         every { carCheckUpService.isCheckUpNecessary(1) } returns true
         every { carCheckUpService.isCheckUpNecessary(100) } returns false
-        every { carCheckUpService.fetchDetails(100) } returns null
+        every { carCheckUpService.fetchDetailsByCarId(100) } returns null
         every { carCheckUpService.fetchManufacturerAnalytics() } returns mutableMapOf()
     }
 
@@ -66,7 +67,7 @@ class CarCheckUpControllerTest{
 
     @Test
     fun `Add car check-up with invalid car ID`() {
-        every { carCheckUpService.addCarCheckUp(any(), any(), any(), any()) } returns false
+        every { carCheckUpService.addCarCheckUp(any(), any(), any(), any()) } throws CarIdException(1)
 
         val requestBody = """
             {
@@ -88,7 +89,7 @@ class CarCheckUpControllerTest{
     @Test
     fun `Get car details for an existing car`() {
         val expectedCar = Car(1, LocalDate.now(), "Manufacturer1", "Model1", Year.of(2023), "VIN1", mutableListOf())
-        every { carCheckUpService.fetchDetails(1) } returns expectedCar
+        every { carCheckUpService.fetchDetailsByCarId(1) } returns expectedCar
 
         val resposneBody = """
             {
