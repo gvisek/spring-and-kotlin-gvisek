@@ -58,7 +58,7 @@ class CarCheckUpControllerTest{
         """.trimIndent()
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/add-carCheckUp")
+            MockMvcRequestBuilders.post("/cars/checkup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
         )
@@ -79,7 +79,7 @@ class CarCheckUpControllerTest{
         """.trimIndent()
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/add-carCheckUp")
+            MockMvcRequestBuilders.post("/cars/checkup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
         )
@@ -106,7 +106,7 @@ class CarCheckUpControllerTest{
             }
         """.trimIndent()
 
-        mockMvc.get("/getCar/1")
+        mockMvc.get("/cars/1")
             .andExpect {
                 status { isOk() }
                 content { resposneBody }
@@ -115,7 +115,7 @@ class CarCheckUpControllerTest{
 
     @Test
     fun `Get car details for a non-existing car`() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/getCar/100"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/cars/100"))
             .andExpect(status().isNotFound)
     }
 

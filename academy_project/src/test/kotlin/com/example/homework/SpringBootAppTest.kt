@@ -33,7 +33,7 @@ class SpringBootAppTest {
     @Test
     fun `Add car check-up with valid data`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/add-carCheckUp")
+            MockMvcRequestBuilders.post("/cars/checkup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                 {
@@ -52,7 +52,7 @@ class SpringBootAppTest {
         val currentDate = LocalDate.now()
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/getCar/1")
+            MockMvcRequestBuilders.get("/cars/1")
         )
             .andExpect(status().isOk)
             .andExpect(content().json("""

@@ -57,7 +57,7 @@ class CarCheckUpServiceTest {
         carCheckUpService.addCarCheckUp(LocalDateTime.now(), "Worker", 200, 2L)
 
         val analytics = carCheckUpService.fetchManufacturerAnalytics()
-        
+
         assertEquals(2, analytics["Manufacturer1"])
         assertEquals(1, analytics["Manufacturer2"])
     }
