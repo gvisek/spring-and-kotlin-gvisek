@@ -9,19 +9,18 @@ import java.time.LocalDateTime
 import java.time.Year
 import java.time.temporal.ChronoUnit
 
-
 @Service
 class CarCheckUpService() {
     private val cars = mutableMapOf<Long, Car>()
     private val carCheckUps = mutableMapOf<Long, CarCheckUp>()
 
-    fun addCar(manufacturer: String, model: String, productionYear: Year, vin: String): Boolean{
+    fun addCar(manufacturer: String, model: String, productionYear: Year, vin: String): Boolean {
         val id = (cars.keys.maxOrNull() ?: 0) + 1
         cars[id] = Car(id, LocalDate.now(), manufacturer, model, productionYear, vin, mutableListOf<CarCheckUp>())
         return true
     }
 
-    fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: Long): Boolean{
+    fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: Long): Boolean {
         doesCarExist(carId)
 
         val id = (carCheckUps.keys.maxOrNull() ?: 0) + 1
@@ -34,18 +33,18 @@ class CarCheckUpService() {
         return true
     }
 
-    fun fetchDetailsByCarId(carId: Long): Car?{
+    fun fetchDetailsByCarId(carId: Long): Car? {
         return cars[carId]
     }
 
-    fun fetchManufacturerAnalytics(): MutableMap<String, Int>{
-        var map:MutableMap<String, Int> = mutableMapOf<String, Int>()
+    fun fetchManufacturerAnalytics(): MutableMap<String, Int> {
+        var map: MutableMap<String, Int> = mutableMapOf<String, Int>()
 
-        cars.values.forEach{car ->
+        cars.values.forEach { car ->
             val count = carCheckUps.values.count { checkUp -> checkUp.carId == car.id }
-            if(map.containsKey(car.manufacturer)){
+            if (map.containsKey(car.manufacturer)) {
                 map[car.manufacturer]?.plus(count)
-            }else{
+            } else {
                 map[car.manufacturer] = count
             }
         }
@@ -53,7 +52,7 @@ class CarCheckUpService() {
         return map
     }
 
-    fun isCheckUpNecessary(carId: Long): Boolean{
+    fun isCheckUpNecessary(carId: Long): Boolean {
         val currentDate = LocalDateTime.now()
 
         return cars[carId]?.checkUps?.none { checkUp ->
@@ -64,8 +63,9 @@ class CarCheckUpService() {
         } ?: true
     }
 
-    fun doesCarExist(carId: Long){
-        if(!cars.containsKey(carId))
+    fun doesCarExist(carId: Long) {
+        if (!cars.containsKey(carId)) {
             throw CarIdException(carId)
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.homework
 
 import com.example.homework.service.CarCheckUpService
-import io.mockk.every
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +25,7 @@ class SpringBootAppTest {
     private lateinit var carCheckUpService: CarCheckUpService
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         carCheckUpService.addCar("Manufacturer1", "Model1", Year.of(2023), "VIN1")
     }
 
@@ -35,14 +34,16 @@ class SpringBootAppTest {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/cars/checkup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""
+                .content(
+                    """
                 {
                     "performedAt": "2023-07-15T10:30:00",
                     "worker": "Worker1",
                     "price": 100,
                     "carId": 1
             }
-            """.trimIndent())
+                    """.trimIndent()
+                )
         )
             .andExpect(status().isOk)
     }
@@ -55,11 +56,13 @@ class SpringBootAppTest {
             MockMvcRequestBuilders.get("/cars/1")
         )
             .andExpect(status().isOk)
-            .andExpect(content().json("""
+            .andExpect(
+                content().json(
+                    """
             {
                 "car": {
                     "id": 1,
-                    "date": "${currentDate.toString()}",
+                    "date": "$currentDate",
                     "manufacturer": "Manufacturer1",
                     "model": "Model1",
                     "productionYear": "2023",
@@ -68,7 +71,9 @@ class SpringBootAppTest {
                 },
                 "checkupNecessary": true
             }
-        """.trimIndent()))
+                    """.trimIndent()
+                )
+            )
     }
 
     @Test
@@ -77,10 +82,14 @@ class SpringBootAppTest {
             MockMvcRequestBuilders.get("/analytics")
         )
             .andExpect(status().isOk)
-            .andExpect(content().json("""
+            .andExpect(
+                content().json(
+                    """
             {
                 "Manufacturer1" : 0
             }
-        """.trimIndent()))
+                    """.trimIndent()
+                )
+            )
     }
 }

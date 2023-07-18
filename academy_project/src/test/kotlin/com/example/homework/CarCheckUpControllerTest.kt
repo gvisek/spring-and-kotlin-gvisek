@@ -1,14 +1,11 @@
 package com.example.homework
 
 import com.example.homework.entity.Car
-import com.example.homework.entity.CarCheckUpRequest
 import com.example.homework.entity.CarIdException
 import com.example.homework.service.CarCheckUpService
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import net.minidev.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,11 +17,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Year
 
 @WebMvcTest
-class CarCheckUpControllerTest{
+class CarCheckUpControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -32,11 +28,9 @@ class CarCheckUpControllerTest{
     @MockkBean
     lateinit var carCheckUpService: CarCheckUpService
 
-
-
     @BeforeEach
-    fun setUp(){
-        every { carCheckUpService.addCar("Manufacturer1", "Model1", Year.of(2023), "VIN1")} answers {true}
+    fun setUp() {
+        every { carCheckUpService.addCar("Manufacturer1", "Model1", Year.of(2023), "VIN1") } answers { true }
         every { carCheckUpService.fetchDetailsByCarId(1) } answers { returnCar() }
         every { carCheckUpService.isCheckUpNecessary(1) } returns true
         every { carCheckUpService.isCheckUpNecessary(100) } returns false
