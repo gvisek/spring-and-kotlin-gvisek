@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 @Controller
 class CarCheckUpController(private val carCheckUpService: CarCheckUpService) {
 
-    @PostMapping("/add-car")
+    @PostMapping("/cars")
     @ResponseBody
     fun addCar(@RequestBody car: CarRequest ): ResponseEntity<Any> {
         carCheckUpService.addCar(car.manufacturer, car.model, car.productionYear, car.vin)
@@ -19,7 +19,7 @@ class CarCheckUpController(private val carCheckUpService: CarCheckUpService) {
         return ResponseEntity.status(HttpStatus.OK).body("Car added")
     }
 
-    @PostMapping("/add-carCheckUp")
+    @PostMapping("/cars/checkup")
     @ResponseBody
     fun addCarCheckUp(@RequestBody carCheckUp: CarCheckUpRequest): ResponseEntity<Any> {
         carCheckUpService.addCarCheckUp(carCheckUp.performedAt, carCheckUp.worker, carCheckUp.price, carCheckUp.carId)
@@ -32,7 +32,7 @@ class CarCheckUpController(private val carCheckUpService: CarCheckUpService) {
         return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
     }
 
-    @GetMapping("/getCar/{carId}")
+    @GetMapping("/cars/{carId}")
     @ResponseBody
     fun getCarDetails(@PathVariable carId: Long): ResponseEntity<Any>{
         val car = carCheckUpService.fetchDetailsByCarId(carId) ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Car with ID $carId not found")
