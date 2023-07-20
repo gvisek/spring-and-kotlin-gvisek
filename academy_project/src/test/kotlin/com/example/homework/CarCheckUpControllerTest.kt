@@ -5,6 +5,8 @@ import com.example.homework.entity.CarCheckUpRequest
 import com.example.homework.entity.CarRequest
 import com.example.homework.service.CarCheckUpService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,12 +28,13 @@ class CarCheckUpControllerTest @Autowired constructor(
     private val objectMapper: ObjectMapper
 ) {
 
-    // Mock the CarCheckUpService
-    @MockBean
+    @MockkBean
     private lateinit var carCheckUpService: CarCheckUpService
 
     @Test
     fun testAddCar() {
+        every { carCheckUpService.addCar(any(), any(), any(), any()) } returns true
+
         val carRequest = CarRequest("Manufacturer1", "Model1", Year.of(2023), "VIN1")
         mockMvc.post("/cars") {
             content = objectMapper.writeValueAsString(carRequest)
@@ -43,7 +46,8 @@ class CarCheckUpControllerTest @Autowired constructor(
 
     @Test
     fun testAddCarCheckUp() {
-        // Assuming the carId is 1L
+        every{carCheckUpService.addCarCheckUp(any(), any(), any(), any())} returns true
+
         val carCheckUpRequest = CarCheckUpRequest(LocalDateTime.now(), "TestWorker", 100, 1L)
         mockMvc.post("/cars/checkup") {
             content = objectMapper.writeValueAsString(carCheckUpRequest)
@@ -58,7 +62,9 @@ class CarCheckUpControllerTest @Autowired constructor(
         // Assuming the carId is 1L
         val carId = 1L
         val car = Car(carId, LocalDate.now(), "Manufacturer1", "Model1", Year.of(2023), "VIN1", mutableListOf())
-        Mockito.`when`(carCheckUpService.fetchDetailsByCarId(carId)).thenReturn(car)
+
+        every { carCheckUpService.fetchDetailsByCarId(any()) } returns car
+        every { carCheckUpService.isCheckUpNecessary(any()) } returns true
 
         mockMvc.get("/cars/$carId")
             .andExpect { status { isOk() } }

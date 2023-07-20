@@ -1,8 +1,13 @@
+package com.example.homework
+
 import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
 import com.example.homework.repository.CarsRepostiory
 import com.example.homework.service.CarCheckUpService
+import io.mockk.every
+import io.mockk.justRun
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,26 +22,22 @@ import java.time.Year
 
 class CarCheckUpServiceTest {
 
-    @Mock
-    private lateinit var carRepository: CarsRepostiory
+    private var carRepository = mockk<CarsRepostiory>()
 
-    @InjectMocks
-    private lateinit var carCheckUpService: CarCheckUpService
+    private var carCheckUpService: CarCheckUpService= CarCheckUpService(carRepository)
 
-    @BeforeEach
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-    }
+
 
     @Test
     fun `addCar should return true`() {
+        justRun { carRepository.addCar("Manufacturer", "Model", Year.of(2021), "VIN1234") }
         val result = carCheckUpService.addCar("Manufacturer", "Model", Year.of(2021), "VIN1234")
         assertEquals(true, result)
     }
 
     @Test
     fun `addCarCheckUp should return true`() {
-        `when`(carRepository.getAllCars()).thenReturn(mutableListOf(Car(1, LocalDate.now(), "Manufacturer", "Model", Year.of(2021), "VIN1234", mutableListOf())))
+        justRun { carRepository.addCarCheckUp(any(), any(), any(), any()) }
 
         val result = carCheckUpService.addCarCheckUp(LocalDateTime.now(), "Worker", 100, 1)
         assertEquals(true, result)
@@ -44,7 +45,7 @@ class CarCheckUpServiceTest {
 
     @Test
     fun `fetchDetailsByCarId should return the car details for a valid car ID`() {
-        `when`(carRepository.getCarById(1)).thenReturn(Car(1, LocalDate.now(), "Manufacturer", "Model", Year.of(2021), "VIN1234", mutableListOf()))
+        every { carRepository.getCarById(1) } returns Car(1, LocalDate.now(), "Manufacturer", "Model", Year.of(2021), "VIN1234", mutableListOf())
 
         val carId = 1L
         val car = carCheckUpService.fetchDetailsByCarId(carId)
@@ -53,7 +54,7 @@ class CarCheckUpServiceTest {
 
     @Test
     fun `fetchDetailsByCarId should return null for an invalid car ID`() {
-        `when`(carRepository.getCarById(1)).thenReturn(null)
+        every { carRepository.getCarById(1) } returns null
 
         val carId = 1L
         val car = carCheckUpService.fetchDetailsByCarId(carId)
@@ -66,7 +67,7 @@ class CarCheckUpServiceTest {
             Car(1, LocalDate.now(), "Manufacturer", "Model", Year.of(2021), "VIN1234", mutableListOf())
         )
 
-        `when`(carRepository.getAllCars()).thenReturn(cars)
+        every { carRepository.getAllCars() } returns cars
 
         val carId = 1L
         val result = carCheckUpService.isCheckUpNecessary(carId)
@@ -79,7 +80,7 @@ class CarCheckUpServiceTest {
             Car(1, LocalDate.now(), "Manufacturer", "Model", Year.of(2021), "VIN1234", mutableListOf(CarCheckUp(1, LocalDateTime.now(), "Worker", 100, 1)))
         )
 
-        `when`(carRepository.getAllCars()).thenReturn(cars)
+        every { carRepository.getAllCars() } returns cars
 
         val carId = 1L
         val result = carCheckUpService.isCheckUpNecessary(carId)
@@ -92,7 +93,7 @@ class CarCheckUpServiceTest {
             Car(1, LocalDate.now(), "Manufacturer", "Model", Year.of(2021), "VIN1234", mutableListOf())
         )
 
-        `when`(carRepository.getAllCars()).thenReturn(cars)
+        every { carRepository.getAllCars() } returns cars
 
         val carId = 2L
         assertThrows<CarIdException> {

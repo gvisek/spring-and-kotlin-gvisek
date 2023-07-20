@@ -10,26 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.Year
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class CarJdbcRepositoryTest {
-
-    @Autowired
-    lateinit var jdbcTemplate: NamedParameterJdbcTemplate
-
-    lateinit var carsJdbcRepository: CarsJdbcRepository
-
-    @BeforeEach
-    fun setUp() {
-        carsJdbcRepository = CarsJdbcRepository(jdbcTemplate)
-    }
+class CarJdbcRepositoryTest @Autowired constructor(
+    private val jdbcTemplate: NamedParameterJdbcTemplate
+){
+    private val carsJdbcRepository: CarsJdbcRepository = CarsJdbcRepository(jdbcTemplate)
 
     @Test
-    @Transactional
     fun testAddCar() {
         val manufacturer = "Manufacturer1"
         val model = "Model1"
@@ -66,7 +60,6 @@ class CarJdbcRepositoryTest {
     }
 
     @Test
-    @Transactional
     fun testAddCarCheckUp() {
         val manufacturer = "Manufacturer1"
         val model = "Model1"
@@ -117,7 +110,6 @@ class CarJdbcRepositoryTest {
     }
 
     @Test
-    @Transactional
     fun testGetCarById() {
         val manufacturer = "Manufacturer1"
         val model = "Model1"
@@ -145,7 +137,6 @@ class CarJdbcRepositoryTest {
     }
 
     @Test
-    @Transactional
     fun testGetAllCars() {
         val car1Id = 1L
         val manufacturer1 = "Manufacturer1"
@@ -200,7 +191,6 @@ class CarJdbcRepositoryTest {
     }
 
     @Test
-    @Transactional
     fun testGetAllCheckUps() {
         val manufacturer = "Manufacturer1"
         val model = "Model1"
