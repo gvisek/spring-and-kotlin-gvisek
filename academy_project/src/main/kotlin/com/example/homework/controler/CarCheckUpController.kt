@@ -1,6 +1,5 @@
 package com.example.homework.controler
 
-
 import com.example.homework.entity.CarCheckUpRequest
 import com.example.homework.entity.CarDetailsResponse
 import com.example.homework.entity.CarIdException
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
-
 
 @Controller
 class CarCheckUpController(private val carCheckUpService: CarCheckUpService) {
