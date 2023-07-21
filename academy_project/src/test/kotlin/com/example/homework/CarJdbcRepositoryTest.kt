@@ -4,15 +4,11 @@ import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
 import com.example.homework.repository.CarsJdbcRepository
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.annotation.Rollback
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.Year
 

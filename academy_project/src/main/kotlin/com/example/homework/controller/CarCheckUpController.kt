@@ -1,4 +1,4 @@
-package com.example.homework.controler
+package com.example.homework.controller
 
 import com.example.homework.entity.CarCheckUpRequest
 import com.example.homework.entity.CarDetailsResponse
