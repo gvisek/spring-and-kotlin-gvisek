@@ -1,0 +1,15 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  courseDatabase:
+    image: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "/var/lib/docker/volumes/CourseDatabase/_data:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER=admin"
+      - "POSTGRES_PASSWORD=admin"
+      - "POSTGRES_DB=course-db"

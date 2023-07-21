@@ -10,5 +10,5 @@ data class Car(
     val model: String,
     val productionYear: Year,
     val vin: String,
-    val checkUps: MutableList<CarCheckUp>
+    var checkUps: MutableList<CarCheckUp>
 )
