@@ -1,11 +1,25 @@
 package com.example.homework.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDateTime
+import java.util.*
+import javax.persistence.*
 
+@Entity
+@Table(name = "checkups")
 data class CarCheckUp(
-    val id: Long,
+    @Id
+    val id: UUID = UUID.randomUUID(),
+
     val performedAt: LocalDateTime,
+
     val worker: String,
+
     val price: Int,
-    val carId: Long
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_id")
+    @JsonIgnore
+    val car: Car
+
 )

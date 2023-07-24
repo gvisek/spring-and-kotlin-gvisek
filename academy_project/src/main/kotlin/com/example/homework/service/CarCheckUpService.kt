@@ -1,34 +1,60 @@
 package com.example.homework.service
 
 import com.example.homework.entity.Car
+import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
-import com.example.homework.repository.CarsRepostiory
+import com.example.homework.repository.CarRepository
+import com.example.homework.repository.CheckUpsRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Year
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 @Service
-class CarCheckUpService(private val carRepository: CarsRepostiory) {
+class CarCheckUpService(
+    private val carRepository: CarRepository,
+    private val checkUpsRepository: CheckUpsRepository
+) {
 
-    fun addCar(manufacturer: String, model: String, productionYear: Year, vin: String): Boolean {
-        carRepository.addCar(manufacturer, model, productionYear, vin)
-        return true
+    fun addCar(manufacturer: String, model: String, productionYear: Int, vin: String): UUID {
+        val car = Car(
+            date = LocalDate.now(),
+            manufacturer = manufacturer,
+            model = model,
+            productionYear = productionYear,
+            vin = vin,
+            checkUps = mutableListOf<CarCheckUp>()
+        )
+
+        return carRepository.save(car).id
     }
 
-    fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: Long): Boolean {
-        carRepository.addCarCheckUp(performedAt, worker, price, carId)
+    fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: UUID): UUID {
+        doesCarExist(carId)
 
-        return true
+        val carCheckUp = CarCheckUp(
+            performedAt = performedAt,
+            worker = worker,
+            price = price,
+            car = carRepository.findCarById(carId) ?: throw CarIdException(carId)
+        )
+
+        return checkUpsRepository.save(carCheckUp).id
     }
 
-    fun fetchDetailsByCarId(carId: Long): Car? {
-        return carRepository.getCarById(carId)
+    fun fetchDetailsByCarId(carId: UUID): Car? {
+        doesCarExist(carId)
+
+        return carRepository.findCarById(carId) ?: throw CarIdException(carId)
     }
 
     fun fetchManufacturerAnalytics(): MutableMap<String, Int> {
         var map: MutableMap<String, Int> = mutableMapOf<String, Int>()
-        var cars = carRepository.getAllCars()
+        var cars = carRepository.findAll()
 
         cars.forEach { car ->
             val count = car.checkUps.count()
@@ -43,10 +69,20 @@ class CarCheckUpService(private val carRepository: CarsRepostiory) {
         return map
     }
 
-    fun isCheckUpNecessary(carId: Long): Boolean {
+    fun getAllCarsPaged(pageable: Pageable): Page<Car>{
+        return carRepository.findAll(pageable)
+    }
+
+    fun getAllCheckUpsForCarPaged(carId: UUID, pageable: Pageable): Page<CarCheckUp> {
+        doesCarExist(carId)
+
+        return checkUpsRepository.findAllByCarId(carId, pageable)
+    }
+
+    fun isCheckUpNecessary(carId: UUID): Boolean {
         val currentDate = LocalDateTime.now()
 
-        val cars = carRepository.getAllCars()
+        val cars = carRepository.findAll()
 
         return cars.find { car -> car.id == carId }?.checkUps?.none { checkUp ->
             ChronoUnit.YEARS.between(
@@ -56,8 +92,8 @@ class CarCheckUpService(private val carRepository: CarsRepostiory) {
         } ?: true
     }
 
-    fun doesCarExist(carId: Long) {
-        val cars = carRepository.getAllCars()
+    fun doesCarExist(carId: UUID) {
+        val cars = carRepository.findAll()
 
         val car = cars.find { car -> car.id == carId } ?: throw CarIdException(carId)
     }
