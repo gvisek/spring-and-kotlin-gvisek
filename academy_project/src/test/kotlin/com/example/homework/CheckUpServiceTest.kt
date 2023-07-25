@@ -27,6 +27,7 @@ class CheckUpServiceTest {
         every { checkUpRepository.save(any()) } returns checkUp
         every { carRepository.findAll() } returns mutableListOf(car)
         every { carRepository.findCarById(any()) } returns car
+        every { carRepository.existsCarById(any())} returns true
 
         val result = checkUpService.addCarCheckUp(LocalDateTime.now(), "Worker", 100,car.id)
         Assertions.assertEquals(checkUp.id, result)

@@ -35,6 +35,7 @@ class CarServiceTest {
         every { carRepository.findCarById(any()) } returns car
         every { carRepository.findAll() } returns mutableListOf(car)
         every { carRepository.findCarById(any()) } returns car
+        every {carRepository.existsCarById(any())} returns true
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
         val carFromDb = carService.fetchDetailsByCarId(carId)
@@ -45,6 +46,7 @@ class CarServiceTest {
     fun `fetchDetailsByCarId should throw error for an invalid car ID`() {
         every { carRepository.findCarById(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")) } returns null
         every { carRepository.findAll() } returns listOf()
+        every { carRepository.existsCarById(any())} returns false
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
 
