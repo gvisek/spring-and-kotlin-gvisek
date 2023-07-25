@@ -4,7 +4,6 @@ import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
 import com.example.homework.repository.CarRepository
-import com.example.homework.repository.CheckUpsRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -15,8 +14,7 @@ import java.util.*
 
 @Service
 class CarService(
-    private val carRepository: CarRepository,
-    private val checkUpsRepository: CheckUpsRepository
+    private val carRepository: CarRepository
 ) {
 
     fun addCar(manufacturer: String, model: String, productionYear: Int, vin: String): UUID {

@@ -1,6 +1,5 @@
 package com.example.homework.service
 
-import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
 import com.example.homework.repository.CarRepository
