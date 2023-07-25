@@ -1,20 +1,20 @@
 drop table if exists cars;
 drop table if exists checkUps;
 
-create table cars(
-    id bigserial primary key,
-    date date,
-    manufacturer varchar(50),
-    model varchar(50),
-    productionYear int,
-    vin varchar(50)
+CREATE TABLE cars (
+    id UUID PRIMARY KEY,
+    date DATE NOT NULL,
+    manufacturer VARCHAR(255) NOT NULL,
+    model VARCHAR(255) NOT NULL,
+    production_year INTEGER NOT NULL,
+    vin VARCHAR(17) NOT NULL
 );
-create table checkUps(
-    id bigserial primary key,
-    performedAt timestamp,
-    worker varchar(50),
-    price int,
-    carId bigint,
-    foreign key(carId) references cars(id)
+CREATE TABLE checkUps (
+    id UUID PRIMARY KEY,
+    performed_At TIMESTAMP NOT NULL,
+    worker VARCHAR(255) NOT NULL,
+    price INTEGER NOT NULL,
+    car_id UUID NOT NULL,
+    CONSTRAINT fk_car_checkup FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE
 );
 

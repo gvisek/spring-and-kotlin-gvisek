@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.spring") version "1.7.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.5.0"
+    kotlin("plugin.jpa") version "1.7.10"
 }
 
 group = "com.example"
@@ -31,8 +32,8 @@ repositories {
 extra["testcontainersVersion"] = "1.15.3"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.flywaydb:flyway-core")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

@@ -1,3 +1,5 @@
 package com.example.homework.entity
 
-class CarIdException(id: Long) : RuntimeException("Car with ID $id does not exist!")
+import java.util.*
+
+class CarIdException(id: UUID) : RuntimeException("Car with ID $id does not exist!")
