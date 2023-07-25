@@ -48,9 +48,9 @@ class CarService(
     }
 
     fun fetchDetailsByCarId(carId: UUID): Car? {
-        doesCarExist(carId)
+        if(!carRepository.existsCarById(carId)) throw CarIdException(carId)
 
-        return carRepository.findCarById(carId) ?: throw CarIdException(carId)
+        return carRepository.findCarById(carId)
     }
 
     fun getAllCarsPaged(pageable: Pageable): Page<Car> {
@@ -68,11 +68,5 @@ class CarService(
                 currentDate
             ) < 1
         } ?: true
-    }
-
-    fun doesCarExist(carId: UUID) {
-        val cars = carRepository.findAll()
-
-        val car = cars.find { car -> car.id == carId } ?: throw CarIdException(carId)
     }
 }

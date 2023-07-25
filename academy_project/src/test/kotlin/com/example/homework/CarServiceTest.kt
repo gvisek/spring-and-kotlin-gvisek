@@ -19,9 +19,7 @@ class CarServiceTest {
 
     private var carRepository = mockk<CarRepository>()
 
-    private var checkUpRepository: CheckUpsRepository = mockk<CheckUpsRepository>()
-
-    private var carService: CarService= CarService(carRepository, checkUpRepository)
+    private var carService: CarService= CarService(carRepository)
 
     @Test
     fun `addCar should return true`() {
@@ -79,19 +77,5 @@ class CarServiceTest {
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
         val result = carService.isCheckUpNecessary(carId)
         Assertions.assertEquals(false, result)
-    }
-
-    @Test
-    fun `doesCarExist should throw an exception for an invalid car ID`() {
-        val cars = mutableListOf(
-            Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), LocalDate.now(), "Manufacturer", "Model", 2021, "VIN1234", mutableListOf())
-        )
-
-        every { carRepository.findAll() } returns cars
-
-        val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc84")
-        assertThrows<CarIdException> {
-            carService.doesCarExist(carId)
-        }
     }
 }

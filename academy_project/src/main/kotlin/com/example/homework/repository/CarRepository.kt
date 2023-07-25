@@ -11,4 +11,5 @@ interface CarRepository: JpaRepository<Car, UUID> {
     override fun findAll(): List<Car>
     override fun findAll(pageable: Pageable): Page<Car>
     fun findCarById(carId: UUID): Car?
+    fun existsCarById(carId: UUID): Boolean
 }

@@ -17,7 +17,7 @@ class CheckUpService(
 ) {
 
     fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: UUID): UUID {
-        doesCarExist(carId)
+        if(!carRepository.existsCarById(carId)) throw CarIdException(carId)
 
         val carCheckUp = CarCheckUp(
             performedAt = performedAt,
@@ -30,14 +30,8 @@ class CheckUpService(
     }
 
     fun getAllCheckUpsForCarPaged(carId: UUID, pageable: Pageable): Page<CarCheckUp> {
-        doesCarExist(carId)
+        if(!carRepository.existsCarById(carId)) throw CarIdException(carId)
 
         return checkUpsRepository.findAllByCarId(carId, pageable)
-    }
-
-    fun doesCarExist(carId: UUID) {
-        val cars = carRepository.findAll()
-
-        val car = cars.find { car -> car.id == carId } ?: throw CarIdException(carId)
     }
 }
