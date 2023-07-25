@@ -10,12 +10,11 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Year
 import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
-class CarCheckUpService(
+class CarService(
     private val carRepository: CarRepository,
     private val checkUpsRepository: CheckUpsRepository
 ) {
@@ -31,25 +30,6 @@ class CarCheckUpService(
         )
 
         return carRepository.save(car).id
-    }
-
-    fun addCarCheckUp(performedAt: LocalDateTime, worker: String, price: Int, carId: UUID): UUID {
-        doesCarExist(carId)
-
-        val carCheckUp = CarCheckUp(
-            performedAt = performedAt,
-            worker = worker,
-            price = price,
-            car = carRepository.findCarById(carId) ?: throw CarIdException(carId)
-        )
-
-        return checkUpsRepository.save(carCheckUp).id
-    }
-
-    fun fetchDetailsByCarId(carId: UUID): Car? {
-        doesCarExist(carId)
-
-        return carRepository.findCarById(carId) ?: throw CarIdException(carId)
     }
 
     fun fetchManufacturerAnalytics(): MutableMap<String, Int> {
@@ -69,14 +49,14 @@ class CarCheckUpService(
         return map
     }
 
-    fun getAllCarsPaged(pageable: Pageable): Page<Car>{
-        return carRepository.findAll(pageable)
-    }
-
-    fun getAllCheckUpsForCarPaged(carId: UUID, pageable: Pageable): Page<CarCheckUp> {
+    fun fetchDetailsByCarId(carId: UUID): Car? {
         doesCarExist(carId)
 
-        return checkUpsRepository.findAllByCarId(carId, pageable)
+        return carRepository.findCarById(carId) ?: throw CarIdException(carId)
+    }
+
+    fun getAllCarsPaged(pageable: Pageable): Page<Car> {
+        return carRepository.findAll(pageable)
     }
 
     fun isCheckUpNecessary(carId: UUID): Boolean {

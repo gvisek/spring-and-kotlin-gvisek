@@ -1,7 +1,7 @@
 package com.example.homework
 
 import com.example.homework.entity.Car
-import com.example.homework.service.CarCheckUpService
+import com.example.homework.service.CarService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,13 +26,13 @@ class SpringBootAppTest {
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private lateinit var carCheckUpService: CarCheckUpService
+    private lateinit var carService: CarService
 
     private lateinit var carId: UUID
 
     @BeforeEach
     fun setUp(){
-         carId = carCheckUpService.addCar("Manufacturer1", "Model1", 2023, "VIN1")
+         carId = carService.addCar("Manufacturer1", "Model1", 2023, "VIN1")
     }
 
     @Test

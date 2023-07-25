@@ -5,52 +5,30 @@ import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
 import com.example.homework.repository.CarRepository
 import com.example.homework.repository.CheckUpsRepository
-import com.example.homework.service.CarCheckUpService
+import com.example.homework.service.CarService
 import io.mockk.every
-import io.mockk.justRun
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Year
 import java.util.*
 
-class CarCheckUpServiceTest {
+class CarServiceTest {
 
     private var carRepository = mockk<CarRepository>()
 
     private var checkUpRepository: CheckUpsRepository = mockk<CheckUpsRepository>()
 
-    private var carCheckUpService: CarCheckUpService= CarCheckUpService(carRepository, checkUpRepository)
-
-
+    private var carService: CarService= CarService(carRepository, checkUpRepository)
 
     @Test
     fun `addCar should return true`() {
         val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), date= LocalDate.now(), manufacturer = "Manufacturer", model = "Model", productionYear = 2021, vin = "VIN1234")
         every { carRepository.save(any()) } returns car
-        val result = carCheckUpService.addCar("Manufacturer", "Model", 2021, "VIN1234")
-        assertEquals(car.id, result)
-    }
-
-    @Test
-    fun `addCarCheckUp should return true`() {
-        val car = Car(date= LocalDate.now(), manufacturer = "Manufacturer", model = "Model", productionYear = 2021, vin = "VIN1234")
-        val checkUp = CarCheckUp(performedAt = LocalDateTime.now(), worker = "Worker1", price = 100, car = car)
-        every { checkUpRepository.save(any()) } returns checkUp
-        every { carRepository.findAll() } returns mutableListOf(car)
-        every { carRepository.findCarById(any()) } returns car
-
-        val result = carCheckUpService.addCarCheckUp(LocalDateTime.now(), "Worker", 100,car.id)
-        assertEquals(checkUp.id, result)
+        val result = carService.addCar("Manufacturer", "Model", 2021, "VIN1234")
+        Assertions.assertEquals(car.id, result)
     }
 
     @Test
@@ -61,8 +39,8 @@ class CarCheckUpServiceTest {
         every { carRepository.findCarById(any()) } returns car
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
-        val carFromDb = carCheckUpService.fetchDetailsByCarId(carId)
-        assertEquals(carId, carFromDb?.id)
+        val carFromDb = carService.fetchDetailsByCarId(carId)
+        Assertions.assertEquals(carId, carFromDb?.id)
     }
 
     @Test
@@ -72,7 +50,7 @@ class CarCheckUpServiceTest {
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
 
-        Assertions.assertThrows(CarIdException::class.java) { -> carCheckUpService.fetchDetailsByCarId(carId) }
+        Assertions.assertThrows(CarIdException::class.java) { -> carService.fetchDetailsByCarId(carId) }
     }
 
     @Test
@@ -84,8 +62,8 @@ class CarCheckUpServiceTest {
         every { carRepository.findAll() } returns cars
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
-        val result = carCheckUpService.isCheckUpNecessary(carId)
-        assertEquals(true, result)
+        val result = carService.isCheckUpNecessary(carId)
+        Assertions.assertEquals(true, result)
     }
 
     @Test
@@ -99,8 +77,8 @@ class CarCheckUpServiceTest {
         every { carRepository.findAll() } returns cars
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
-        val result = carCheckUpService.isCheckUpNecessary(carId)
-        assertEquals(false, result)
+        val result = carService.isCheckUpNecessary(carId)
+        Assertions.assertEquals(false, result)
     }
 
     @Test
@@ -113,7 +91,7 @@ class CarCheckUpServiceTest {
 
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc84")
         assertThrows<CarIdException> {
-            carCheckUpService.doesCarExist(carId)
+            carService.doesCarExist(carId)
         }
     }
 }
