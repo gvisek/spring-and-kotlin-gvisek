@@ -1,9 +1,10 @@
 package com.example.homework.service
 
-import com.example.homework.entity.Car
-import com.example.homework.entity.CarCheckUp
-import com.example.homework.entity.CarIdException
+import com.example.homework.entity.*
 import com.example.homework.repository.CarRepository
+import com.example.homework.repository.ManufacturerModelRepository
+import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -14,14 +15,21 @@ import java.util.*
 
 @Service
 class CarService(
-    private val carRepository: CarRepository
+    private val carRepository: CarRepository,
+    private val manufacturerModelRepository: ManufacturerModelRepository
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun addCar(manufacturer: String, model: String, productionYear: Int, vin: String): UUID {
+        val isVerified = verifyManufacturerModel(manufacturer, model)
+
+        if(!isVerified)
+            throw InvalidManufacturerOrModelException(manufacturer, model)
+
         val car = Car(
             date = LocalDate.now(),
-            manufacturer = manufacturer,
-            model = model,
+            carDetails = manufacturerModelRepository.findManufacturerModelByManufacturerAndModel(manufacturer, model),
             productionYear = productionYear,
             vin = vin,
             checkUps = mutableListOf<CarCheckUp>()
@@ -36,11 +44,11 @@ class CarService(
 
         cars.forEach { car ->
             val count = car.checkUps.count()
-            if (map.containsKey(car.manufacturer)) {
-                val newValue = map[car.manufacturer]?.plus(count) ?: 0
-                map[car.manufacturer] = newValue
+            if (map.containsKey(car.carDetails.manufacturer)) {
+                val newValue = map[car.carDetails.manufacturer]?.plus(count) ?: 0
+                map[car.carDetails.manufacturer] = newValue
             } else {
-                map[car.manufacturer] = count
+                map[car.carDetails.manufacturer] = count
             }
         }
 
@@ -68,5 +76,11 @@ class CarService(
                 currentDate
             ) < 1
         } ?: true
+    }
+
+    @Cacheable("Verification")
+    fun verifyManufacturerModel(manufacturer: String, model: String): Boolean {
+        logger.info("Caching data for $manufacturer $model")
+        return manufacturerModelRepository.existsManufacturerModelByManufacturerAndModel(manufacturer, model)
     }
 }

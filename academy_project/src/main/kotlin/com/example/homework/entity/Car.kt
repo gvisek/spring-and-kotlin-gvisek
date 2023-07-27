@@ -13,9 +13,9 @@ data class Car(
 
     val date: LocalDate,
 
-    val manufacturer: String,
-
-    val model: String,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_details")
+    val carDetails: ManufacturerModel,
 
     val productionYear: Int,
 

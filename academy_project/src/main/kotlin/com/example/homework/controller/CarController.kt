@@ -3,6 +3,7 @@ package com.example.homework.controller
 import com.example.homework.entity.CarDetailsResponse
 import com.example.homework.entity.CarIdException
 import com.example.homework.entity.CarRequest
+import com.example.homework.entity.InvalidManufacturerOrModelException
 import com.example.homework.service.CarService
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -37,7 +38,12 @@ class CarController(
     fun getAnalytics() = carService.fetchManufacturerAnalytics()
 
     @ExceptionHandler(value = [(CarIdException::class)])
-    fun handleException(ex: CarIdException): ResponseEntity<String> {
+    fun handleCarIdException(ex: CarIdException): ResponseEntity<String> {
+        return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(value = [(InvalidManufacturerOrModelException::class)])
+    fun handleInvalidManufacturerOrModelException(ex: InvalidManufacturerOrModelException): ResponseEntity<String> {
         return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
     }
 

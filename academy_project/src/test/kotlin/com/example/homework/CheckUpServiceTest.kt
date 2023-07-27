@@ -2,6 +2,7 @@ package com.example.homework
 
 import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
+import com.example.homework.entity.ManufacturerModel
 import com.example.homework.repository.CarRepository
 import com.example.homework.repository.CheckUpsRepository
 import com.example.homework.service.CheckUpService
@@ -22,7 +23,10 @@ class CheckUpServiceTest {
 
     @Test
     fun `addCarCheckUp should return true`() {
-        val car = Car(date= LocalDate.now(), manufacturer = "Manufacturer", model = "Model", productionYear = 2021, vin = "VIN1234")
+        val car = Car(date= LocalDate.now(),
+            carDetails = ManufacturerModel(manufacturer = "Manufacturer", model = "Model"),
+            productionYear = 2021,
+            vin = "VIN1234")
         val checkUp = CarCheckUp(performedAt = LocalDateTime.now(), worker = "Worker1", price = 100, car = car)
         every { checkUpRepository.save(any()) } returns checkUp
         every { carRepository.findAll() } returns mutableListOf(car)
