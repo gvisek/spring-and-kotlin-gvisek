@@ -14,7 +14,7 @@ class SchedulerConfiguration(
     private val manufacturerModelService: ManufacturerModelService
 ) {
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 86400000)
     @CacheEvict(allEntries = true, value = ["Verification"])
     fun fetchData(){
         manufacturerModelService.getAllManufacturersAndModels()
