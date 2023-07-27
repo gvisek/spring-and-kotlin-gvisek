@@ -7,6 +7,7 @@ import com.example.homework.entity.ManufacturerModel
 import com.example.homework.repository.CarRepository
 import com.example.homework.repository.ManufacturerModelRepository
 import com.example.homework.service.CarService
+import com.example.homework.service.ManufacturerVerificationService
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
@@ -21,7 +22,9 @@ class CarServiceTest {
 
     private val manufacturerModelRepository = mockk<ManufacturerModelRepository>()
 
-    private var carService: CarService= CarService(carRepository, manufacturerModelRepository)
+    private val verificationService = mockk<ManufacturerVerificationService>()
+
+    private var carService: CarService= CarService(carRepository, manufacturerModelRepository, verificationService)
 
     @Test
     fun `addCar should return true`() {
@@ -34,6 +37,7 @@ class CarServiceTest {
         every { carRepository.save(any()) } returns car
         every { manufacturerModelRepository.existsManufacturerModelByManufacturerAndModel(any(), any())} returns true
         every { manufacturerModelRepository.findManufacturerModelByManufacturerAndModel(any(), any())} returns carDetails
+        every { verificationService.verifyManufacturerModel(any(), any()) } returns true
         val result = carService.addCar("Manufacturer", "Model", 2021, "VIN1234")
         Assertions.assertEquals(car.id, result)
     }

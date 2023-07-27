@@ -16,13 +16,12 @@ import java.util.*
 @Service
 class CarService(
     private val carRepository: CarRepository,
-    private val manufacturerModelRepository: ManufacturerModelRepository
+    private val manufacturerModelRepository: ManufacturerModelRepository,
+    private val verificationService: ManufacturerVerificationService
 ) {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
     fun addCar(manufacturer: String, model: String, productionYear: Int, vin: String): UUID {
-        val isVerified = verifyManufacturerModel(manufacturer, model)
+        val isVerified = verificationService.verifyManufacturerModel(manufacturer, model)
 
         if(!isVerified)
             throw InvalidManufacturerOrModelException(manufacturer, model)
@@ -76,11 +75,5 @@ class CarService(
                 currentDate
             ) < 1
         } ?: true
-    }
-
-    @Cacheable("Verification")
-    fun verifyManufacturerModel(manufacturer: String, model: String): Boolean {
-        logger.info("Caching data for $manufacturer $model")
-        return manufacturerModelRepository.existsManufacturerModelByManufacturerAndModel(manufacturer, model)
     }
 }
