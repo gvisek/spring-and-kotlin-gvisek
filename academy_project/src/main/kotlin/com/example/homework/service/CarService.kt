@@ -3,8 +3,6 @@ package com.example.homework.service
 import com.example.homework.entity.*
 import com.example.homework.repository.CarRepository
 import com.example.homework.repository.ManufacturerModelRepository
-import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
