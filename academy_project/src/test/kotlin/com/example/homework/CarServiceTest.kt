@@ -3,14 +3,15 @@ package com.example.homework
 import com.example.homework.entity.Car
 import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
+import com.example.homework.entity.ManufacturerModel
 import com.example.homework.repository.CarRepository
-import com.example.homework.repository.CheckUpsRepository
+import com.example.homework.repository.ManufacturerModelRepository
 import com.example.homework.service.CarService
+import com.example.homework.service.ManufacturerVerificationService
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -19,19 +20,36 @@ class CarServiceTest {
 
     private var carRepository = mockk<CarRepository>()
 
-    private var carService: CarService= CarService(carRepository)
+    private val manufacturerModelRepository = mockk<ManufacturerModelRepository>()
+
+    private val verificationService = mockk<ManufacturerVerificationService>()
+
+    private var carService: CarService= CarService(carRepository, manufacturerModelRepository, verificationService)
 
     @Test
     fun `addCar should return true`() {
-        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), date= LocalDate.now(), manufacturer = "Manufacturer", model = "Model", productionYear = 2021, vin = "VIN1234")
+        val carDetails = ManufacturerModel(manufacturer = "Manufacturer1", model = "Model1")
+        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"),
+            date= LocalDate.now(),
+            carDetails,
+            productionYear = 2021,
+            vin = "VIN1234")
         every { carRepository.save(any()) } returns car
+        every { manufacturerModelRepository.existsManufacturerModelByManufacturerAndModel(any(), any())} returns true
+        every { manufacturerModelRepository.findManufacturerModelByManufacturerAndModel(any(), any())} returns carDetails
+        every { verificationService.verifyManufacturerModel(any(), any()) } returns true
         val result = carService.addCar("Manufacturer", "Model", 2021, "VIN1234")
         Assertions.assertEquals(car.id, result)
     }
 
     @Test
     fun `fetchDetailsByCarId should return the car details for a valid car ID`() {
-        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), LocalDate.now(), "Manufacturer", "Model", 2021, "VIN1234", mutableListOf())
+        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"),
+            LocalDate.now(),
+            ManufacturerModel(manufacturer = "Manufacturer1", model = "Model1"),
+            2021,
+            "VIN1234",
+            mutableListOf())
         every { carRepository.findCarById(any()) } returns car
         every { carRepository.findAll() } returns mutableListOf(car)
         every { carRepository.findCarById(any()) } returns car
@@ -56,7 +74,12 @@ class CarServiceTest {
     @Test
     fun `isCheckUpNecessary should return true when no check-up performed within the last year`() {
         val cars = mutableListOf(
-            Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), LocalDate.now(), "Manufacturer", "Model", 2021, "VIN1234", mutableListOf())
+            Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"),
+                LocalDate.now(),
+                ManufacturerModel(manufacturer = "Manufacturer1", model = "Model1"),
+                2021,
+                "VIN1234",
+                mutableListOf())
         )
 
         every { carRepository.findAll() } returns cars
@@ -68,7 +91,12 @@ class CarServiceTest {
 
     @Test
     fun `isCheckUpNecessary should return false when a check-up performed within the last year`() {
-        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), LocalDate.now(), "Manufacturer", "Model", 2021, "VIN1234", mutableListOf())
+        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"),
+            LocalDate.now(),
+            ManufacturerModel(manufacturer = "Manufacturer1", model = "Model1"),
+            2021,
+            "VIN1234",
+            mutableListOf())
         car.checkUps.add(CarCheckUp(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc84"), LocalDateTime.now(), "Worker", 100, car))
         val cars = mutableListOf(
             car

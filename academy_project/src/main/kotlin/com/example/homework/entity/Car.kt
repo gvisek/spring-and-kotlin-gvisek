@@ -1,7 +1,6 @@
 package com.example.homework.entity
 
 import java.time.LocalDate
-import java.time.Year
 import java.util.*
 import javax.persistence.*
 
@@ -13,9 +12,9 @@ data class Car(
 
     val date: LocalDate,
 
-    val manufacturer: String,
-
-    val model: String,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_details")
+    val carDetails: ManufacturerModel,
 
     val productionYear: Int,
 

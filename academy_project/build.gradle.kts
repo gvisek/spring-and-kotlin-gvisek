@@ -33,6 +33,7 @@ extra["testcontainersVersion"] = "1.15.3"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.flywaydb:flyway-core")
@@ -44,6 +45,10 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.mockito:mockito-core:3.12.4")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    //implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    testImplementation("org.mock-server:mockserver-spring-test-listener:5.11.2")
 }
 
 dependencyManagement {
