@@ -45,7 +45,7 @@ class CheckUpControllerTest@Autowired constructor(
             content = objectMapper.writeValueAsString(carCheckUpRequest)
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isOk() }
+            status { isCreated() }
         }
     }
 
@@ -67,7 +67,7 @@ class CheckUpControllerTest@Autowired constructor(
 
         every { checkUpService.getAllCheckUpsForCarPaged(any(), any()) } returns page
 
-        mockMvc.get("/cars/checkup/paged/{carId}", carId) {
+        mockMvc.get("/cars/checkup/{carId}/page", carId) {
             accept = MediaType.APPLICATION_JSON
             param("size", "10")
             param("page", "0")

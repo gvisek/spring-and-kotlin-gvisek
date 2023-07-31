@@ -44,7 +44,7 @@ class CarControllerTest@Autowired constructor(
             content = objectMapper.writeValueAsString(carRequest)
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isOk() }
+            status { isCreated() }
         }
     }
 
@@ -70,8 +70,9 @@ class CarControllerTest@Autowired constructor(
         val page: Page<Car> = PageImpl(cars, pageable, cars.size.toLong())
 
         every { carService.getAllCarsPaged(any()) } returns page
+        every { carService.isCheckUpNecessary(any())} returns true
 
-        mockMvc.get("/cars/paged") {
+        mockMvc.get("/cars/page") {
             accept = MediaType.APPLICATION_JSON
             param("size", "10")
             param("page", "0")

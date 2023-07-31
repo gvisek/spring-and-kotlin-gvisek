@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.time.LocalDate
 import java.util.*
 
@@ -88,7 +89,7 @@ class SpringBootAppTest {
                     """.trimIndent()
                 )
         )
-            .andExpect(status().isOk)
+            .andExpect(status().isCreated)
     }
 
     @Test
@@ -96,6 +97,10 @@ class SpringBootAppTest {
         val currentDate = LocalDate.now()
         val carDetails = manufacturerModelRepository.findManufacturerModelByManufacturerAndModel("Porsche", "911 Turbo")
         val carDetailsJson = objectMapper.writeValueAsString(carDetails)
+        val location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(mapOf("id" to carId))
+            .toUri()
         mockMvc.perform(
             MockMvcRequestBuilders.get("/cars/$carId")
         )
@@ -103,17 +108,22 @@ class SpringBootAppTest {
             .andExpect(
                 content().json(
                     """
-            {
-                "car": {
-                    "id": $carId,
+                    {
+                    "id": "$carId",
                     "date": "$currentDate",
                     "carDetails": $carDetailsJson,
                     "productionYear": 2023,
                     "vin": "VIN1",
-                    "checkUps": []
-                },
-                "checkupNecessary": true
-            }
+                    "checkupNecessary": true,
+                    "_links": {
+                        "self": {
+                            "href": "http://localhost/cars/$carId"
+                        },
+                        "checkUps": {
+                            "href": "http://localhost/cars/checkup/$carId/page?sortOrder=asc"
+                        }
+                    }
+                }
                     """.trimIndent()
                 )
             )
@@ -122,7 +132,7 @@ class SpringBootAppTest {
     @Test
     fun `Get analytics data`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/analytics")
+            MockMvcRequestBuilders.get("/cars/analytics")
         )
             .andExpect(status().isOk)
             .andExpect(
@@ -139,7 +149,7 @@ class SpringBootAppTest {
     @Test
     fun `Get all cars paged`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/cars/paged")
+            MockMvcRequestBuilders.get("/cars/page")
         )
             .andExpect(status().isOk)
     }
@@ -147,7 +157,7 @@ class SpringBootAppTest {
     @Test
     fun `Get all checkUps for a car paged`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/cars/checkup/paged/$carId")
+            MockMvcRequestBuilders.get("/cars/checkup/$carId/page")
         )
             .andExpect(status().isOk)
     }
