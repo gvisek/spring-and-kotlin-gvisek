@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
 import org.mockserver.model.MediaType
+import org.springframework.security.test.context.support.WithAnonymousUser
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -74,6 +76,7 @@ class SpringBootAppTest {
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `Add car check-up with valid data`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/cars/checkup")
@@ -93,6 +96,7 @@ class SpringBootAppTest {
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `Get car details for an existing car`() {
         val currentDate = LocalDate.now()
         val carDetails = manufacturerModelRepository.findManufacturerModelByManufacturerAndModel("Porsche", "911 Turbo")
@@ -130,6 +134,7 @@ class SpringBootAppTest {
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `Get analytics data`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/cars/analytics")
@@ -147,6 +152,7 @@ class SpringBootAppTest {
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `Get all cars paged`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/cars/page")
@@ -155,10 +161,38 @@ class SpringBootAppTest {
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `Get all checkUps for a car paged`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/cars/checkup/$carId/page")
         )
             .andExpect(status().isOk)
+    }
+
+    @Test
+    @WithMockUser(authorities = ["SCOPE_user"])
+    fun `Delete car with user authority should return 403 Forbidden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/cars/${carId}")
+        )
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    @WithAnonymousUser
+    fun `Get all cars paged without admin authority should return 403 Forbidden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/cars/page")
+        )
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    @WithMockUser(authorities = ["SCOPE_user"])
+    fun `Delete car without admin authority should return 403 Forbidden`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/cars/${carId}")
+        )
+            .andExpect(status().isForbidden)
     }
 }

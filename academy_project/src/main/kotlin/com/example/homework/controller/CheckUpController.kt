@@ -33,6 +33,13 @@ class CheckUpController(
         return ResponseEntity.created(location).body("Car Check Up with id: $checkUpId added")
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    fun deleteCheckUp(@PathVariable id: UUID): ResponseEntity<Any>{
+        val checkUp = checkUpService.deleteCarCheckUp(id)
+        return ResponseEntity.ok("Deleted checkUp with id: ${checkUp.id}")
+    }
+
     @GetMapping("/{carId}/page")
     @ResponseBody
     fun getAllCheckUpsForCarPaged(@PathVariable carId: UUID,@RequestParam sortOrder: String?, pageable: Pageable): ResponseEntity<Any>{

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -37,6 +38,7 @@ class CheckUpControllerTest@Autowired constructor(
     private lateinit var checkUpService: CheckUpService
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun testAddCarCheckUp() {
         every{checkUpService.addCarCheckUp(any(), any(), any(), any())} returns UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
 
@@ -50,6 +52,7 @@ class CheckUpControllerTest@Autowired constructor(
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `test getAllCheckUpsForCarPaged should return checkups with 200 status`() {
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
         val pageable = Pageable.ofSize(10).withPage(0)

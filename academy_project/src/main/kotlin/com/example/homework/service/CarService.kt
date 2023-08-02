@@ -35,6 +35,11 @@ class CarService(
         return carRepository.save(car).id
     }
 
+    fun deleteCar(carId: UUID): Car{
+        if(!carRepository.existsCarById(carId)) throw CarIdException(carId)
+        return carRepository.deleteCarById(carId)
+    }
+
     fun fetchManufacturerAnalytics(): MutableMap<String, Int> {
         var map: MutableMap<String, Int> = mutableMapOf<String, Int>()
         var cars = carRepository.findAll()

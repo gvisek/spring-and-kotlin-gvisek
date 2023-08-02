@@ -2,6 +2,7 @@ package com.example.homework.service
 
 import com.example.homework.entity.CarCheckUp
 import com.example.homework.entity.CarIdException
+import com.example.homework.entity.CheckUpException
 import com.example.homework.repository.CarRepository
 import com.example.homework.repository.CheckUpsRepository
 import org.springframework.data.domain.Page
@@ -27,6 +28,11 @@ class CheckUpService(
         )
 
         return checkUpsRepository.save(carCheckUp).id
+    }
+
+    fun deleteCarCheckUp(id: UUID): CarCheckUp{
+        if(!checkUpsRepository.existsById(id)) throw CheckUpException(id)
+        return checkUpsRepository.deleteCarCheckUpById(id)
     }
 
     fun getAllCheckUpsForCarPaged(carId: UUID, pageable: Pageable): Page<CarCheckUp> {
