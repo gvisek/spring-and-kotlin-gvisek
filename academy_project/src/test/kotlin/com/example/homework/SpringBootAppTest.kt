@@ -195,4 +195,18 @@ class SpringBootAppTest {
         )
             .andExpect(status().isForbidden)
     }
+
+    @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
+    fun `Delete car with admin authority should run successfully`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/cars/${carId}")
+        )
+            .andExpect(status().isOk)
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/cars/${carId}")
+        )
+            .andExpect(status().isNotFound)
+
+    }
 }

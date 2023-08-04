@@ -6,6 +6,7 @@ import com.example.homework.repository.ManufacturerModelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -35,9 +36,12 @@ class CarService(
         return carRepository.save(car).id
     }
 
-    fun deleteCar(carId: UUID): Car{
+    @Transactional
+    fun deleteCar(carId: UUID): Car?{
         if(!carRepository.existsCarById(carId)) throw CarIdException(carId)
-        return carRepository.deleteCarById(carId)
+        val car = carRepository.findCarById(carId)
+        carRepository.deleteCarById(carId)
+        return car
     }
 
     fun fetchManufacturerAnalytics(): MutableMap<String, Int> {

@@ -9,6 +9,7 @@ import com.example.homework.repository.ManufacturerModelRepository
 import com.example.homework.service.CarService
 import com.example.homework.service.ManufacturerVerificationService
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -107,5 +108,37 @@ class CarServiceTest {
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
         val result = carService.isCheckUpNecessary(carId)
         Assertions.assertEquals(false, result)
+    }
+
+    @Test
+    fun `testDeleteCar With Valid CarId Car Deleted Successfully`() {
+        val carIdToDelete = UUID.randomUUID()
+        val carToDelete = Car(
+            id = carIdToDelete,
+            date = LocalDate.now(),
+            carDetails = ManufacturerModel(manufacturer = "Manufacturer1", model = "Model1"),
+            productionYear = 2022,
+            vin = "VIN1",
+            checkUps = mutableListOf()
+        )
+
+        every { carRepository.existsCarById(carIdToDelete) } returns true
+        justRun { carRepository.deleteCarById(carIdToDelete) }
+        every { carRepository.findCarById(carIdToDelete)} returns carToDelete
+
+        val deletedCar = carService.deleteCar(carIdToDelete)
+
+        Assertions.assertEquals(carIdToDelete, deletedCar?.id)
+    }
+
+    @Test
+    fun `testDeleteCar With Invalid CarId CarIdException Thrown`() {
+        val invalidCarId = UUID.randomUUID()
+
+        every { carRepository.existsCarById(invalidCarId) } returns false
+
+        Assertions.assertThrows(CarIdException::class.java) {
+            carService.deleteCar(invalidCarId)
+        }
     }
 }

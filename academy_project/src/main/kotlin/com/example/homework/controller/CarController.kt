@@ -46,7 +46,7 @@ class CarController(
     fun deleteCar(@PathVariable carId: UUID): ResponseEntity<Any> {
         val car = carService.deleteCar(carId)
 
-        return ResponseEntity.ok("Deleted car with id: ${car.id}")
+        return ResponseEntity.ok("Deleted car with id: ${car?.id}")
     }
 
     @GetMapping("/analytics")

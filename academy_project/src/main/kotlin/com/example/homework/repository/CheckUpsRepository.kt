@@ -11,5 +11,5 @@ interface CheckUpsRepository:JpaRepository<CarCheckUp, UUID> {
     override fun findAll(): List<CarCheckUp>
     fun findAllByCarId(carId: UUID, pageable: Pageable): Page<CarCheckUp>
     fun findCarCheckUpById(id : UUID): CarCheckUp
-    fun deleteCarCheckUpById(id: UUID): CarCheckUp
+    fun deleteCarCheckUpById(id: UUID): Unit
 }
