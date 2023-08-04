@@ -156,4 +156,28 @@ class CarJPARepositoryTest @Autowired constructor(
         Assertions.assertEquals(productionYear2, car2FromDb?.productionYear)
         Assertions.assertEquals(vin2, car2FromDb?.vin)
     }
+
+    @Test
+    fun `deleteCar With Valid CarId Should Run Successfully`(){
+        val manufacturer = "Manufacturer1"
+        val model = "Model1"
+        val productionYear = 2023
+        val vin = "VIN1"
+        val carDetails = ManufacturerModel(id = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc87"),
+            manufacturer = manufacturer, model = model)
+
+        manufacturerModelRepository.save(carDetails)
+
+        val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), date = LocalDate.now(), carDetails = carDetails, productionYear = productionYear, vin = vin, checkUps = mutableListOf<CarCheckUp>())
+
+        carRepository.save(car)
+
+        val carFromDb = carRepository.findCarById(car.id)
+        Assertions.assertNotNull(carFromDb)
+
+        carRepository.deleteCarById(car.id)
+        
+        val deletedCar = carRepository.findCarById(car.id)
+        Assertions.assertNull(deletedCar)
+    }
 }

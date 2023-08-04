@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -36,6 +37,7 @@ class CarControllerTest@Autowired constructor(
     private lateinit var carService: CarService
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun testAddCar() {
         every { carService.addCar(any(), any(), any(), any()) } returns UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
 
@@ -49,6 +51,7 @@ class CarControllerTest@Autowired constructor(
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun testGetCarDetails() {
         // Assuming the carId is 1L
         val carId = UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83")
@@ -62,6 +65,7 @@ class CarControllerTest@Autowired constructor(
     }
 
     @Test
+    @WithMockUser(authorities = ["SCOPE_admin"])
     fun `test getAllCarsPaged should return cars with 200 status`() {
         val pageable = Pageable.ofSize(10).withPage(0)
         val car = Car(UUID.fromString("3b572be6-02e1-4b73-93b8-cb7a3648bc83"), LocalDate.now(), ManufacturerModel(manufacturer = "Manufacturer1", model = "Model1"), 2023, "VIN1", mutableListOf())

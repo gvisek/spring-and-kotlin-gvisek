@@ -3,6 +3,7 @@ package com.example.homework.controller
 import com.example.homework.entity.CarCheckUpRequest
 import com.example.homework.entity.CarDetailsResponse
 import com.example.homework.entity.CarIdException
+import com.example.homework.entity.CheckUpException
 import com.example.homework.service.CheckUpService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PagedResourcesAssembler
@@ -33,6 +34,13 @@ class CheckUpController(
         return ResponseEntity.created(location).body("Car Check Up with id: $checkUpId added")
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    fun deleteCheckUp(@PathVariable id: UUID): ResponseEntity<Any>{
+        val checkUp = checkUpService.deleteCarCheckUp(id)
+        return ResponseEntity.ok("Deleted checkUp with id: ${checkUp?.id}")
+    }
+
     @GetMapping("/{carId}/page")
     @ResponseBody
     fun getAllCheckUpsForCarPaged(@PathVariable carId: UUID,@RequestParam sortOrder: String?, pageable: Pageable): ResponseEntity<Any>{
@@ -55,6 +63,11 @@ class CheckUpController(
 
     @ExceptionHandler(value = [(CarIdException::class)])
     fun handleException(ex: CarIdException): ResponseEntity<String> {
+        return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(value = [(CheckUpException::class)])
+    fun handleCheckUpIdException(ex: CheckUpException): ResponseEntity<String> {
         return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
     }
 }
