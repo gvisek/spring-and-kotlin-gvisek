@@ -1,6 +1,6 @@
 package com.example.homework.config
 
-import org.springframework.beans.factory.annotation.Value
+import com.example.homework.service.HttpConfigUrl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
@@ -11,9 +11,9 @@ class HttpConfiguration {
     @Bean
     fun provideWebClient(
         webClientBuilder: WebClient.Builder,
-        @Value("\${car-service.base-url}") baseUrl: String
+        httpConfigUrl: HttpConfigUrl
     ): WebClient {
-        return webClientBuilder.baseUrl(baseUrl).build()
+        return webClientBuilder.baseUrl(httpConfigUrl.baseUrl).build()
     }
 
 }

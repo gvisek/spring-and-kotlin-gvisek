@@ -2,7 +2,18 @@
 version: '3.1'
 
 services:
-
+  app:
+    image: "academy/jib-image"
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://courseDatabase:5432/course_db"
+      - "SPRING_REDIS_HOST=test-redis"
+      - "SPRING_REDIS_PORT=6379"
+      - "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI=http://host.docker.internal:8888/jwks.json"
+    depends_on:
+      - courseDatabase
+      - test-redis
   courseDatabase:
     image: "postgres"
     ports:
